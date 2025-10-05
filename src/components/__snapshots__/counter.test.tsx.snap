@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Counter > should match snapshot 1`] = `
+<div>
+  <div>
+    <h3
+      data-testid="title"
+    >
+      CONTADOR
+    </h3>
+    <span>
+      0
+    </span>
+     
+    <button>
+      -
+      1
+    </button>
+    <button>
+      +
+      1
+    </button>
+  </div>
+</div>
+`;
