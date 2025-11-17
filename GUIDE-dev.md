@@ -1,2 +1,0 @@
-- guias de desarrollo (archivos o elementos que van en cada carpeta, y otros)
-- guias de pruebas

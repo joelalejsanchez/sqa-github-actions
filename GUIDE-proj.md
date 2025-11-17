@@ -1,3 +1,0 @@
-- tecnologias
-- convenciones
-- dependencias
