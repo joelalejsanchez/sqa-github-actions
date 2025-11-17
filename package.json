@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:cv": "vitest run --coverage"
+    "test:cv": "vitest run --coverage --reporter=text"
   },
   "dependencies": {
     "react": "^19.1.1",

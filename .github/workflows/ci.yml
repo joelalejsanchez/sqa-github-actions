@@ -1,0 +1,105 @@
+name: CI/CD React Vite
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: "Testing"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargando el código
+        uses: actions/checkout@v3
+
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Instalando Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Instalando dependencias
+        run: npm ci
+
+      - name: Ejecutando tests y cobertura
+        run: npm run test:cv
+
+  build:
+    name: "Construcción"
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Descargando el código
+        uses: actions/checkout@v3
+
+      - name: Instalando Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Instalando dependencias
+        run: npm ci
+
+      - name: Generando build
+        run: npm run build
+
+      - name: Ejecutando artifact de upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: dist
+
+  deploy:
+    name: "Despliegue"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
+
+      - name: Desplegando a GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
+
+  notify:
+    name: "Envío de correo"
+    runs-on: ubuntu-latest
+    needs: [test, build, deploy]
+    steps:
+      - name: Enviando correo
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.example.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_TOKEN }}
+          subject: GitHub Actions - Build Status
+          to: ${{ vars.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USER }}
+          body: |
+            Status of CI/CD workflow:
+            - Test job: ${{ needs.test.result }}
+            - Build job: ${{ needs.build.result }}
+            - Deploy job: ${{ needs.deploy.result }}
