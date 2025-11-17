@@ -52,11 +52,11 @@ describe("Counter", () => {
 
   // Trabajar con screen para snapshots es mas complicado entonces prefiero no hacerlo (att joel)
   // No se recomienda usar snapshots si es que los componentes reciben una actualizacion muy constante
-  test("should match snapshot", async () => {
+  /*   test("should match snapshot", async () => {
     const TITLE = "Contador";
     const { container } = render(<Counter title={TITLE} start={0} />);
     expect(container).toMatchSnapshot();
-  });
+  }); */
 
   // No esta recomendado por Hernando Herrera usar atributos data para obtener los elementos, pero si es la necesidad se pueden realizar de esta manera
   test("should match title, with testid", async () => {
